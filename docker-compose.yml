@@ -1,0 +1,23 @@
+# https://stackoverflow.com/questions/53263972/oracle-on-alpine-linux
+# docker volume create --name=data
+# docker-compose up -d
+# docker-compose ps
+# docker exec -it hello sh
+# vim .env
+# docker logs hello
+# docker-compose rm
+# docker volume ls
+version: '2'
+services:
+  hello:
+    network_mode: host
+    container_name: hello
+    image: hello-0.0.1
+    restart: always
+#    ports:
+#      - 8046:8046
+    volumes:
+      - ./data:/app/data
+volumes:
+  data:
+    external: true
