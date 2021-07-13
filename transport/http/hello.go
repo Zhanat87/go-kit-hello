@@ -27,7 +27,8 @@ func MakeHandler(srvEndpoints middleware.Endpoints, logger kitlog.Logger,
 		opts...,
 	)
 	r := mux.NewRouter()
-	r.Handle(baseURL, index).Methods("POST")
+	r.Handle(baseURL, index).Methods(http.MethodPost)
+	r.Handle(baseURL, index).Methods(http.MethodGet)
 
 	return r
 }
