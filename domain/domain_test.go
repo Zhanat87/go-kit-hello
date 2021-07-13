@@ -28,10 +28,9 @@ func TestModel(t *testing.T) {
 		model := &domain.Model{}
 		So(model, ShouldHaveSameTypeAs, &domain.Model{})
 		Convey("Model SayHi", func() {
-			greeting := "Hi, "
-			So(greeting, ShouldEqual, model.SayHi())
+			So(domain.Greeting, ShouldEqual, model.SayHi())
 			model.Name = "test name"
-			So(greeting+model.Name, ShouldEqual, model.SayHi())
+			So(domain.Greeting+model.Name, ShouldEqual, model.SayHi())
 		})
 	})
 }
