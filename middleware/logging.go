@@ -19,7 +19,9 @@ func NewLoggingMiddleware(logger log.Logger, s contracts.HTTPService, packageNam
 
 func (s *loggingMiddleware) Index(req interface{}) (_ interface{}, err error) {
 	defer func(begin time.Time) {
+		println("e")
 		if err != nil {
+			println("f")
 			_ = s.logger.Log(
 				"method", s.packageName+"_index",
 				"took", time.Since(begin),
@@ -29,4 +31,18 @@ func (s *loggingMiddleware) Index(req interface{}) (_ interface{}, err error) {
 	}(time.Now())
 
 	return s.next.Index(req)
+}
+
+func (s *loggingMiddleware) Error(req interface{}) (_ interface{}, err error) {
+	defer func(begin time.Time) {
+		if err != nil {
+			_ = s.logger.Log(
+				"method", s.packageName+"_error",
+				"took", time.Since(begin),
+				"err", err,
+			)
+		}
+	}(time.Now())
+
+	return s.next.Error(req)
 }

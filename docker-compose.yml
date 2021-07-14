@@ -7,17 +7,51 @@
 # docker logs hello
 # docker-compose rm
 # docker volume ls
+# docker images
+# docker rmi -f docker_id
+# https://www.ru-rocker.com/2017/04/02/micro-services-using-go-kit-monitoring-services/
+# docker inspect hello
+# https://prometheus.io/docs/guides/go-application/
+# https://prometheus.io/docs/visualization/grafana/#grafana-support-for-prometheus
+# https://docs.docker.com/config/daemon/prometheus/
 version: '2'
 services:
   hello:
     network_mode: host
     container_name: hello
-    image: hello-0.0.1
+    image: hello-0.0.5
     restart: always
 #    ports:
 #      - 8046:8046
     volumes:
       - ./data:/app/data
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    network_mode: host
+#    ports:
+#      - 9090:9090
+    volumes:
+      - $PWD/data/prometheus.yml:/etc/prometheus/prometheus.yml
+#  http://localhost:3000/ admin/password
+#  add your first dashboard -> prometheus -> create
+#  http://172.20.0.3:9090/  docker inspect go-kit-hello_prometheus_1 IPAddress
+#  chmod -R 0777 data/grafana
+#  http://localhost:3000/d/YSBiDBm7k/hello?orgId=1&editPanel=2
+#  создать data source, создать dashboard -> save
+#  edit dashboard -> в metrics browser ввести hello и
+#  выбрать нужную метрику и смотреть графики можно
+#  метрики всегда суммируются с самого начала
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    network_mode: host
+#    ports:
+#      - 3000:3000
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=password
+    volumes:
+      - $PWD/data/grafana:/var/lib/grafana
 volumes:
   data:
     external: true

@@ -26,9 +26,15 @@ func MakeHandler(srvEndpoints middleware.Endpoints, logger kitlog.Logger,
 		encoders.EncodeResponseJSON,
 		opts...,
 	)
+	error := kithttp.NewServer(
+		srvEndpoints.ErrorEndpoint,
+		decodeIndexRequestFunc,
+		encoders.EncodeResponseJSON,
+		opts...,
+	)
 	r := mux.NewRouter()
 	r.Handle(baseURL, index).Methods(http.MethodPost)
-	r.Handle(baseURL, index).Methods(http.MethodGet)
+	r.Handle(baseURL+"error", error).Methods(http.MethodPost)
 
 	return r
 }

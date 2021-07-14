@@ -10,11 +10,13 @@ import (
 
 type Endpoints struct {
 	IndexEndpoint endpoint.Endpoint
+	ErrorEndpoint endpoint.Endpoint
 }
 
 func MakeEndpoints(s contracts.HTTPService) Endpoints {
 	return Endpoints{
 		IndexEndpoint: MakeIndexEndpoint(s),
+		ErrorEndpoint: MakeErrorEndpoint(s),
 	}
 }
 
@@ -22,6 +24,18 @@ func MakeIndexEndpoint(next contracts.HTTPService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(transport.HelloRequest)
 		resp, err := next.Index(&req)
+		if err != nil {
+			return nil, err
+		}
+
+		return resp, nil
+	}
+}
+
+func MakeErrorEndpoint(next contracts.HTTPService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(transport.HelloRequest)
+		resp, err := next.Error(&req)
 		if err != nil {
 			return nil, err
 		}
