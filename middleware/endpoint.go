@@ -6,7 +6,6 @@ import (
 	"github.com/Zhanat87/go-kit-hello/contracts"
 	"github.com/Zhanat87/go-kit-hello/transport"
 	"github.com/go-kit/kit/endpoint"
-	kitoc "github.com/go-kit/kit/tracing/opencensus"
 )
 
 type Endpoints struct {
@@ -16,12 +15,9 @@ type Endpoints struct {
 
 func MakeEndpoints(s contracts.HTTPService) Endpoints {
 	// http://localhost:9411/zipkin/?serviceName=hello&lookback=15m&endTs=1626256523000&limit=10
-	indexEndpoint := MakeIndexEndpoint(s)
-	indexEndpoint = kitoc.TraceEndpoint("gokit:endpoint hello index")(indexEndpoint)
-
 	return Endpoints{
-		IndexEndpoint: indexEndpoint,
-		ErrorEndpoint: MakeErrorEndpoint(s),
+		IndexEndpoint: GetTraceEndpoint(MakeIndexEndpoint(s), "index"),
+		ErrorEndpoint: GetTraceEndpoint(MakeErrorEndpoint(s), "error"),
 	}
 }
 

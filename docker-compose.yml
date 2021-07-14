@@ -19,7 +19,7 @@ services:
   hello:
     network_mode: host
     container_name: hello
-    image: hello-0.0.6
+    image: hello-0.0.7
     restart: always
 #    ports:
 #      - 8046:8046

@@ -10,5 +10,5 @@
 make tests
 make lint
 #make build2
-docker build -t hello-0.0.6 .
+docker build -t hello-0.0.7 .
 docker-compose up -d
