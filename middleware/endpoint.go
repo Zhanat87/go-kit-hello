@@ -15,6 +15,7 @@ type Endpoints struct {
 }
 
 func MakeEndpoints(s contracts.HTTPService) Endpoints {
+	// http://localhost:9411/zipkin/?serviceName=hello&lookback=15m&endTs=1626256523000&limit=10
 	indexEndpoint := MakeIndexEndpoint(s)
 	indexEndpoint = kitoc.TraceEndpoint("gokit:endpoint hello index")(indexEndpoint)
 
