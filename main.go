@@ -17,6 +17,11 @@ import (
 	"github.com/Zhanat87/go-kit-hello/loggers"
 	hellohttp "github.com/Zhanat87/go-kit-hello/transport/http"
 	"github.com/go-kit/kit/log"
+
+	oczipkin "contrib.go.opencensus.io/exporter/zipkin"
+	zipkin "github.com/openzipkin/zipkin-go"
+	httpreporter "github.com/openzipkin/zipkin-go/reporter/http"
+	"go.opencensus.io/trace"
 )
 
 func main() {
@@ -24,6 +29,22 @@ func main() {
 	flag.Parse()
 	logger := new(loggers.GoKitLoggerFactory).CreateLogger()
 	httpLogger := log.With(logger, "component", "http")
+
+	// Set-up our OpenCensus instrumentation with Zipkin backend
+	zipkinURL := "http://localhost:9411/api/v2/spans"
+	{
+		var (
+			reporter         = httpreporter.NewReporter(zipkinURL)
+			localEndpoint, _ = zipkin.NewEndpoint(utils.PackageName, ":0")
+			exporter         = oczipkin.NewExporter(reporter, localEndpoint)
+		)
+		defer reporter.Close()
+		// Always sample our traces for this demo.
+		trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
+		// Register our trace exporter.
+		trace.RegisterExporter(exporter)
+	}
+
 	mux := http.NewServeMux()
 	// curl -i -X POST -H "Content-Type: application/json" -d '{"name":"val"}' http://localhost:8080/api/v1/hello/
 	// curl -i -X POST -H "Content-Type: application/json" -d '{"name":"error"}' http://localhost:8080/api/v1/hello/error

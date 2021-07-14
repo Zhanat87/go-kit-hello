@@ -16,15 +16,15 @@
 # https://docs.docker.com/config/daemon/prometheus/
 version: '2'
 services:
-  hello:
-    network_mode: host
-    container_name: hello
-    image: hello-0.0.5
-    restart: always
-#    ports:
-#      - 8046:8046
-    volumes:
-      - ./data:/app/data
+#  hello:
+#    network_mode: host
+#    container_name: hello
+#    image: hello-0.0.6
+#    restart: always
+##    ports:
+##      - 8046:8046
+#    volumes:
+#      - ./data:/app/data
   prometheus:
     image: prom/prometheus
     container_name: prometheus
@@ -52,6 +52,27 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=password
     volumes:
       - $PWD/data/grafana:/var/lib/grafana
+  storage:
+    image: ghcr.io/openzipkin/zipkin-mysql
+    container_name: mysql
+    network_mode: host
+    # Uncomment to expose the storage port for testing
+    # ports:
+    #   - 3306:3306
+  # Use MySQL instead of in-memory storage
+  zipkin:
+    # slim doesn't include MySQL support, so switch to the larger image
+    image: ghcr.io/openzipkin/zipkin
+    container_name: zipkin
+    network_mode: host
+    environment:
+      - STORAGE_TYPE=mysql
+      - MYSQL_HOST=storage
+      # Add the baked-in username and password for the zipkin-mysql image
+      - MYSQL_USER=zipkin
+      - MYSQL_PASS=zipkin
+    depends_on:
+      - storage
 volumes:
   data:
     external: true
