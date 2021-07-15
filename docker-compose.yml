@@ -16,15 +16,15 @@
 # https://docs.docker.com/config/daemon/prometheus/
 version: '2'
 services:
-  hello:
-    network_mode: host
-    container_name: hello
-    image: hello-0.0.7
-    restart: always
-#    ports:
-#      - 8046:8046
-    volumes:
-      - ./data:/app/data
+#  hello:
+#    network_mode: host
+#    container_name: hello
+#    image: hello-0.0.9
+#    restart: always
+##    ports:
+##      - 8046:8046
+#    volumes:
+#      - ./data:/app/data
   prometheus:
     image: prom/prometheus
     container_name: prometheus

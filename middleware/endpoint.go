@@ -11,6 +11,7 @@ import (
 type Endpoints struct {
 	IndexEndpoint endpoint.Endpoint
 	ErrorEndpoint endpoint.Endpoint
+	GrpcEndpoint  endpoint.Endpoint
 }
 
 func MakeEndpoints(s contracts.HTTPService) Endpoints {
@@ -18,6 +19,7 @@ func MakeEndpoints(s contracts.HTTPService) Endpoints {
 	return Endpoints{
 		IndexEndpoint: GetTraceEndpoint(MakeIndexEndpoint(s), "index"),
 		ErrorEndpoint: GetTraceEndpoint(MakeErrorEndpoint(s), "error"),
+		GrpcEndpoint:  GetTraceEndpoint(MakeGrpcEndpoint(s), "grpc"),
 	}
 }
 
@@ -37,6 +39,18 @@ func MakeErrorEndpoint(next contracts.HTTPService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(transport.HelloRequest)
 		resp, err := next.Error(&req)
+		if err != nil {
+			return nil, err
+		}
+
+		return resp, nil
+	}
+}
+
+func MakeGrpcEndpoint(next contracts.HTTPService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(transport.HelloRequest)
+		resp, err := next.Grpc(&req)
 		if err != nil {
 			return nil, err
 		}

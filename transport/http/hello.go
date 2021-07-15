@@ -3,6 +3,7 @@ package http
 import (
 	"context"
 	"encoding/json"
+	kitoc "github.com/go-kit/kit/tracing/opencensus"
 	"net/http"
 
 	"github.com/Zhanat87/go-kit-hello/encoders"
@@ -19,6 +20,7 @@ func MakeHandler(srvEndpoints middleware.Endpoints, logger kitlog.Logger,
 	opts := []kithttp.ServerOption{
 		kithttp.ServerErrorHandler(kittransport.NewLogErrorHandler(logger)),
 		kithttp.ServerErrorEncoder(encoders.EncodeErrorJSON),
+		kitoc.HTTPServerTrace(),
 	}
 	index := kithttp.NewServer(
 		srvEndpoints.IndexEndpoint,
@@ -32,9 +34,16 @@ func MakeHandler(srvEndpoints middleware.Endpoints, logger kitlog.Logger,
 		encoders.EncodeResponseJSON,
 		opts...,
 	)
+	grpc := kithttp.NewServer(
+		srvEndpoints.GrpcEndpoint,
+		decodeIndexRequestFunc,
+		encoders.EncodeResponseJSON,
+		opts...,
+	)
 	r := mux.NewRouter()
 	r.Handle(baseURL, index).Methods(http.MethodPost)
 	r.Handle(baseURL+"error", error).Methods(http.MethodPost)
+	r.Handle(baseURL+"grpc", grpc).Methods(http.MethodPost)
 
 	return r
 }

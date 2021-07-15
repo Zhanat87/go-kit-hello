@@ -55,3 +55,17 @@ func (s *instrumentingMiddleware) Error(req interface{}) (_ interface{}, err err
 
 	return s.next.Error(req)
 }
+
+func (s *instrumentingMiddleware) Grpc(req interface{}) (_ interface{}, err error) {
+	defer func(begin time.Time) {
+		labels := []string{"method", s.packageName + "_grpc"}
+		s.requestCount.With(labels...).Add(1)
+		if err != nil {
+			println("hello grpc")
+			s.requestError.With(labels...).Add(1)
+		}
+		s.requestLatency.With(labels...).Observe(time.Since(begin).Seconds())
+	}(time.Now())
+
+	return s.next.Grpc(req)
+}
