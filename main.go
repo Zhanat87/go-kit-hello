@@ -3,21 +3,24 @@ package main
 import (
 	"flag"
 	"fmt"
-	zipkingrpc "github.com/openzipkin/zipkin-go/middleware/grpc"
 	"net"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 
-	"github.com/Zhanat87/go-kit-hello/httphandlers"
+	zipkingrpc "github.com/openzipkin/zipkin-go/middleware/grpc"
+
+	zipkingrpc "github.com/openzipkin/zipkin-go/middleware/grpc"
+
+	"github.com/Zhanat87/common-libs/httphandlers"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/Zhanat87/go-kit-hello/factory"
 	"github.com/Zhanat87/go-kit-hello/middleware"
 	"github.com/Zhanat87/go-kit-hello/utils"
 
-	"github.com/Zhanat87/go-kit-hello/loggers"
+	"github.com/Zhanat87/common-libs/loggers"
 	hellogrpc "github.com/Zhanat87/go-kit-hello/transport/grpc"
 	hellohttp "github.com/Zhanat87/go-kit-hello/transport/http"
 	"github.com/go-kit/kit/log"

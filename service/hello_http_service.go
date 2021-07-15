@@ -3,9 +3,10 @@ package service
 import (
 	"context"
 	"errors"
+	"log"
+
 	"github.com/openzipkin/zipkin-go"
 	"google.golang.org/grpc"
-	"log"
 
 	"github.com/Zhanat87/go-kit-hello/contracts"
 	"github.com/Zhanat87/go-kit-hello/transport"

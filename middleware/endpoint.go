@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"context"
+
 	"github.com/Zhanat87/go-kit-hello/contracts"
 	"github.com/Zhanat87/go-kit-hello/transport"
 	"github.com/go-kit/kit/endpoint"

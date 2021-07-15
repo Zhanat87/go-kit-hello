@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"context"
+
 	"github.com/go-kit/kit/endpoint"
 	kitoc "github.com/go-kit/kit/tracing/opencensus"
 	"github.com/openzipkin/zipkin-go"
