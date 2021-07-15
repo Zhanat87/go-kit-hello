@@ -5,13 +5,12 @@ import (
 	"errors"
 	"log"
 
-	"github.com/openzipkin/zipkin-go"
-	"google.golang.org/grpc"
-
+	commongrpc "github.com/Zhanat87/common-libs/grpc"
 	"github.com/Zhanat87/go-kit-hello/contracts"
 	"github.com/Zhanat87/go-kit-hello/transport"
-	hellogrpc "github.com/Zhanat87/go-kit-hello/transport/grpc"
+	"github.com/openzipkin/zipkin-go"
 	zipkingrpc "github.com/openzipkin/zipkin-go/middleware/grpc"
+	"google.golang.org/grpc"
 )
 
 type helloHTTPService struct {
@@ -42,8 +41,8 @@ func (s *helloHTTPService) Grpc(ctx context.Context, req interface{}) (interface
 		log.Fatalf("did not connect: %s", err)
 	}
 	defer conn.Close()
-	c := hellogrpc.NewHelloServiceClient(conn)
-	response, err := c.SayHi(context.Background(), &hellogrpc.HelloRequest{Name: r.Name})
+	c := commongrpc.NewHelloServiceClient(conn)
+	response, err := c.SayHi(context.Background(), &commongrpc.HelloRequest{Name: r.Name})
 	if err != nil {
 		return nil, err
 	}

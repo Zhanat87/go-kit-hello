@@ -3,21 +3,21 @@ package grpc
 import (
 	"context"
 
+	commongrpc "github.com/Zhanat87/common-libs/grpc"
 	"github.com/Zhanat87/go-kit-hello/contracts"
 	"github.com/Zhanat87/go-kit-hello/middleware"
 	"github.com/Zhanat87/go-kit-hello/transport"
-
 	"github.com/go-kit/kit/log"
 	gokittransport "github.com/go-kit/kit/transport"
 	"github.com/go-kit/kit/transport/grpc"
 )
 
 type helloGrpcServer struct {
-	UnimplementedHelloServiceServer
+	commongrpc.UnimplementedHelloServiceServer
 	sayHi grpc.Handler
 }
 
-func NewServer(s contracts.HTTPService, logger log.Logger) HelloServiceServer {
+func NewServer(s contracts.HTTPService, logger log.Logger) commongrpc.HelloServiceServer {
 	options := []grpc.ServerOption{
 		grpc.ServerErrorHandler(gokittransport.NewLogErrorHandler(logger)),
 	}
@@ -32,17 +32,17 @@ func NewServer(s contracts.HTTPService, logger log.Logger) HelloServiceServer {
 	}
 }
 
-func (s *helloGrpcServer) SayHi(ctx context.Context, req *HelloRequest) (*HelloResponse, error) {
+func (s *helloGrpcServer) SayHi(ctx context.Context, req *commongrpc.HelloRequest) (*commongrpc.HelloResponse, error) {
 	_, resp, err := s.sayHi.ServeGRPC(ctx, req)
 	if err != nil {
 		return nil, err
 	}
 
-	return resp.(*HelloResponse), nil
+	return resp.(*commongrpc.HelloResponse), nil
 }
 
 func decodeHelloRequest(_ context.Context, grpcReq interface{}) (interface{}, error) {
-	req := grpcReq.(*HelloRequest)
+	req := grpcReq.(*commongrpc.HelloRequest)
 
 	return transport.HelloRequest{
 		Name: req.Name,
@@ -52,5 +52,5 @@ func decodeHelloRequest(_ context.Context, grpcReq interface{}) (interface{}, er
 func encodeHelloResponse(_ context.Context, response interface{}) (interface{}, error) {
 	resp := response.(*transport.HelloResponse)
 
-	return &HelloResponse{Data: resp.Data}, nil
+	return &commongrpc.HelloResponse{Data: resp.Data}, nil
 }
