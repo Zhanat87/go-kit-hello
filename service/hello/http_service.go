@@ -1,4 +1,4 @@
-package service
+package hello
 
 import (
 	"context"
@@ -6,33 +6,38 @@ import (
 	"log"
 
 	commongrpc "github.com/Zhanat87/common-libs/grpc"
-	"github.com/Zhanat87/go-kit-hello/contracts"
 	"github.com/Zhanat87/go-kit-hello/transport"
 	"github.com/openzipkin/zipkin-go"
 	zipkingrpc "github.com/openzipkin/zipkin-go/middleware/grpc"
 	"google.golang.org/grpc"
 )
 
-type helloHTTPService struct {
-	helloService contracts.HelloService
-	tracer       *zipkin.Tracer
+type HTTPService interface {
+	Index(req interface{}) (response interface{}, err error)
+	Error(req interface{}) (response interface{}, err error)
+	Grpc(ctx context.Context, req interface{}) (response interface{}, err error)
 }
 
-func NewHTTPService(tracer *zipkin.Tracer) contracts.HTTPService {
-	return &helloHTTPService{helloService: NewHelloService(), tracer: tracer}
+type httpService struct {
+	service Service
+	tracer  *zipkin.Tracer
 }
 
-func (s *helloHTTPService) Index(req interface{}) (interface{}, error) {
+func NewHTTPService(tracer *zipkin.Tracer) HTTPService {
+	return &httpService{service: NewService(), tracer: tracer}
+}
+
+func (s *httpService) Index(req interface{}) (interface{}, error) {
 	r := req.(*transport.HelloRequest)
 
-	return &transport.HelloResponse{Data: s.helloService.SayHi(r.Name)}, nil
+	return &transport.HelloResponse{Data: s.service.SayHi(r.Name)}, nil
 }
 
-func (s *helloHTTPService) Error(req interface{}) (interface{}, error) {
+func (s *httpService) Error(req interface{}) (interface{}, error) {
 	return &transport.HelloResponse{Data: "error response"}, errors.New("error from hello")
 }
 
-func (s *helloHTTPService) Grpc(ctx context.Context, req interface{}) (interface{}, error) {
+func (s *httpService) Grpc(ctx context.Context, req interface{}) (interface{}, error) {
 	r := req.(*transport.HelloRequest)
 	var conn *grpc.ClientConn
 	conn, err := grpc.Dial(":50051", grpc.WithInsecure(),

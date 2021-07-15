@@ -4,17 +4,17 @@ import (
 	"context"
 	"time"
 
-	"github.com/Zhanat87/go-kit-hello/contracts"
+	"github.com/Zhanat87/go-kit-hello/service/hello"
 	"github.com/go-kit/kit/log"
 )
 
 type loggingMiddleware struct {
 	logger      log.Logger
-	next        contracts.HTTPService
+	next        hello.HTTPService
 	packageName string
 }
 
-func NewLoggingMiddleware(logger log.Logger, s contracts.HTTPService, packageName string) contracts.HTTPService {
+func NewLoggingMiddleware(logger log.Logger, s hello.HTTPService, packageName string) hello.HTTPService {
 	return &loggingMiddleware{logger, s, packageName}
 }
 

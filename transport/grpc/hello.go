@@ -4,8 +4,8 @@ import (
 	"context"
 
 	commongrpc "github.com/Zhanat87/common-libs/grpc"
-	"github.com/Zhanat87/go-kit-hello/contracts"
 	"github.com/Zhanat87/go-kit-hello/middleware"
+	"github.com/Zhanat87/go-kit-hello/service/hello"
 	"github.com/Zhanat87/go-kit-hello/transport"
 	"github.com/go-kit/kit/log"
 	gokittransport "github.com/go-kit/kit/transport"
@@ -17,7 +17,7 @@ type helloGrpcServer struct {
 	sayHi grpc.Handler
 }
 
-func NewServer(s contracts.HTTPService, logger log.Logger) commongrpc.HelloServiceServer {
+func NewServer(s hello.HTTPService, logger log.Logger) commongrpc.HelloServiceServer {
 	options := []grpc.ServerOption{
 		grpc.ServerErrorHandler(gokittransport.NewLogErrorHandler(logger)),
 	}

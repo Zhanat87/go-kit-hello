@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/Zhanat87/go-kit-hello/contracts"
+	"github.com/Zhanat87/go-kit-hello/service/hello"
 	"github.com/go-kit/kit/metrics"
 )
 
@@ -12,12 +12,12 @@ type instrumentingMiddleware struct {
 	requestCount   metrics.Counter
 	requestLatency metrics.Histogram
 	requestError   metrics.Counter
-	next           contracts.HTTPService
+	next           hello.HTTPService
 	packageName    string
 }
 
 func NewInstrumentingMiddleware(counter metrics.Counter, latency metrics.Histogram,
-	counterE metrics.Counter, s contracts.HTTPService, packageName string) contracts.HTTPService {
+	counterE metrics.Counter, s hello.HTTPService, packageName string) hello.HTTPService {
 	return &instrumentingMiddleware{
 		requestCount:   counter,
 		requestLatency: latency,
