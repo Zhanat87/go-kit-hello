@@ -58,15 +58,10 @@ func main() {
 		}
 	}
 	mux := http.NewServeMux()
-	// curl -i -X POST -H "Content-Type: application/json" -d '{"name":"val"}' http://localhost:8080/api/v1/hello/
-	// curl -i -X POST -H "Content-Type: application/json" -d '{"name":"error"}' http://localhost:8080/api/v1/hello/error
-	// curl -i -X POST -H "Content-Type: application/json" -d '{"name":"grpc"}' http://localhost:8080/api/v1/hello/grpc
 	helloHTTPService := new(factory.ServiceFactory).CreateHTTPService(httpLogger, tracer)
 	mux.Handle(utils.BaseURL, hellohttp.MakeHandler(middleware.MakeEndpoints(helloHTTPService), httpLogger,
 		utils.BaseURL, hellohttp.DecodeIndexRequest))
-	// http://localhost:8080/metrics
 	http.Handle("/metrics", promhttp.Handler())
-	// http://localhost:8080/check
 	http.HandleFunc("/health-check", httphandlers.HealthCheck)
 	http.Handle("/api/v1/", httphandlers.AccessControl(mux))
 	errs := make(chan error, 3)
