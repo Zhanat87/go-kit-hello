@@ -1,53 +1,15 @@
-# https://stackoverflow.com/questions/53263972/oracle-on-alpine-linux
-# docker volume create --name=data
-# docker-compose up -d
-# docker-compose ps
-# docker exec -it hello sh
-# vim .env
-# docker logs hello
-# docker-compose rm
-# docker volume ls
-# docker images
-# docker rmi -f docker_id
-# https://www.ru-rocker.com/2017/04/02/micro-services-using-go-kit-monitoring-services/
-# docker inspect hello
-# https://prometheus.io/docs/guides/go-application/
-# https://prometheus.io/docs/visualization/grafana/#grafana-support-for-prometheus
-# https://docs.docker.com/config/daemon/prometheus/
 version: '2'
 services:
-#  hello:
-#    network_mode: host
-#    container_name: hello
-#    image: hello-0.0.9
-#    restart: always
-##    ports:
-##      - 8046:8046
-#    volumes:
-#      - ./data:/app/data
   prometheus:
     image: prom/prometheus
     container_name: prometheus
     network_mode: host
-#    ports:
-#      - 9090:9090
     volumes:
       - $PWD/data/prometheus.yml:/etc/prometheus/prometheus.yml
-#  http://localhost:3000/ admin/password
-#  add your first dashboard -> prometheus -> create
-#  http://172.20.0.3:9090/  docker inspect go-kit-hello_prometheus_1 IPAddress
-#  chmod -R 0777 data/grafana
-#  http://localhost:3000/d/YSBiDBm7k/hello?orgId=1&editPanel=2
-#  создать data source, создать dashboard -> save
-#  edit dashboard -> в metrics browser ввести hello и
-#  выбрать нужную метрику и смотреть графики можно
-#  метрики всегда суммируются с самого начала
   grafana:
     image: grafana/grafana
     container_name: grafana
     network_mode: host
-#    ports:
-#      - 3000:3000
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=password
     volumes:
@@ -56,63 +18,17 @@ services:
     image: ghcr.io/openzipkin/zipkin-mysql
     container_name: mysql
     network_mode: host
-    # Uncomment to expose the storage port for testing
-    # ports:
-    #   - 3306:3306
-  # Use MySQL instead of in-memory storage
-#  sudo docker logs zipkin
   zipkin:
-    # slim doesn't include MySQL support, so switch to the larger image
     image: ghcr.io/openzipkin/zipkin
     container_name: zipkin
     network_mode: host
     environment:
       - STORAGE_TYPE=mysql
-#      - MYSQL_HOST=storage
       - MYSQL_HOST=localhost
-      # Add the baked-in username and password for the zipkin-mysql image
       - MYSQL_USER=zipkin
       - MYSQL_PASS=zipkin
     depends_on:
       - storage
-#  https://github.com/jaegertracing/jaeger/blob/master/docker-compose/jaeger-docker-compose.yml
-#  jaeger-collector:
-#    image: jaegertracing/jaeger-collector
-#    command: [ "--cassandra.keyspace=jaeger_v1_dc1", "--cassandra.servers=cassandra", "--collector.zipkin.host-port=9411" ]
-#    ports:
-#      - "14269"
-#      - "14268:14268"
-#      - "14250"
-#      - "9411:9411"
-#    restart: on-failure
-#    depends_on:
-#      - cassandra-schema
-#  jaeger-query:
-#    image: jaegertracing/jaeger-query
-#    command: [ "--cassandra.keyspace=jaeger_v1_dc1", "--cassandra.servers=cassandra" ]
-#    ports:
-#      - "16686:16686"
-#      - "16687"
-#    restart: on-failure
-#    depends_on:
-#      - cassandra-schema
-#  jaeger-agent:
-#    image: jaegertracing/jaeger-agent
-#    command: [ "--reporter.grpc.host-port=jaeger-collector:14250" ]
-#    ports:
-#      - "5775:5775/udp"
-#      - "6831:6831/udp"
-#      - "6832:6832/udp"
-#      - "5778:5778"
-#    restart: on-failure
-#    depends_on:
-#      - jaeger-collector
-#  cassandra:
-#    image: cassandra:3.9
-#  cassandra-schema:
-#    image: jaegertracing/jaeger-cassandra-schema
-#    depends_on:
-#      - cassandra
 volumes:
   data:
     external: true
