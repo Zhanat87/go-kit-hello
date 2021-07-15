@@ -4,8 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
-
-
 	kitoc "github.com/go-kit/kit/tracing/opencensus"
 
 	"github.com/Zhanat87/common-libs/encoders"

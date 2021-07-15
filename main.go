@@ -9,10 +9,6 @@ import (
 	"os/signal"
 	"syscall"
 
-	zipkingrpc "github.com/openzipkin/zipkin-go/middleware/grpc"
-
-	zipkingrpc "github.com/openzipkin/zipkin-go/middleware/grpc"
-
 	"github.com/Zhanat87/common-libs/httphandlers"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
@@ -27,6 +23,7 @@ import (
 
 	oczipkin "contrib.go.opencensus.io/exporter/zipkin"
 	zipkin "github.com/openzipkin/zipkin-go"
+	zipkingrpc "github.com/openzipkin/zipkin-go/middleware/grpc"
 	httpreporter "github.com/openzipkin/zipkin-go/reporter/http"
 	"go.opencensus.io/trace"
 

@@ -2,7 +2,6 @@ package factory
 
 import (
 	"github.com/Zhanat87/common-libs/instrumenting"
-	"github.com/Zhanat87/common-libs/instrumenting"
 	"github.com/Zhanat87/go-kit-hello/contracts"
 	"github.com/Zhanat87/go-kit-hello/middleware"
 	"github.com/Zhanat87/go-kit-hello/service"
