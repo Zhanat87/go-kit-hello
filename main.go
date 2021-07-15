@@ -16,6 +16,7 @@ import (
 	"github.com/Zhanat87/go-kit-hello/middleware"
 	"github.com/Zhanat87/go-kit-hello/utils"
 
+	commongrpc "github.com/Zhanat87/common-libs/grpc"
 	"github.com/Zhanat87/common-libs/loggers"
 	hellogrpc "github.com/Zhanat87/go-kit-hello/transport/grpc"
 	hellohttp "github.com/Zhanat87/go-kit-hello/transport/http"
@@ -67,7 +68,7 @@ func main() {
 	errs := make(chan error, 3)
 	baseGrpcServer := grpc.NewServer(grpc.StatsHandler(zipkingrpc.NewServerHandler(tracer)))
 	grpcHelloServer := hellogrpc.NewServer(helloHTTPService, logger)
-	hellogrpc.RegisterHelloServiceServer(baseGrpcServer, grpcHelloServer)
+	commongrpc.RegisterHelloServiceServer(baseGrpcServer, grpcHelloServer)
 	reflection.Register(baseGrpcServer)
 	grpcListener, err := net.Listen("tcp", *grpcAddr)
 	if err != nil {
