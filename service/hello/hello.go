@@ -1,6 +1,10 @@
 package hello
 
-const Greeting = "Hi, "
+const (
+	PackageName = "hello"
+	BaseURL     = "/api/v1/hello/"
+	Greeting    = "Hi, "
+)
 
 type Service interface {
 	SayHi(name string) string

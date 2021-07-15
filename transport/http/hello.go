@@ -3,8 +3,10 @@ package http
 import (
 	"context"
 	"encoding/json"
-	kitoc "github.com/go-kit/kit/tracing/opencensus"
 	"net/http"
+
+
+	kitoc "github.com/go-kit/kit/tracing/opencensus"
 
 	"github.com/Zhanat87/common-libs/encoders"
 	"github.com/Zhanat87/go-kit-hello/middleware"

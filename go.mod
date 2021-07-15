@@ -7,6 +7,7 @@ require (
 	github.com/Zhanat87/common-libs v0.0.5
 	github.com/go-kit/kit v0.11.0
 	github.com/gorilla/mux v1.6.2
+	github.com/joho/godotenv v1.3.0
 	github.com/openzipkin/zipkin-go v0.2.5
 	github.com/prometheus/client_golang v1.11.0
 	github.com/smartystreets/goconvey v1.6.4

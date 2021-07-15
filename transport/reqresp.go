@@ -7,3 +7,11 @@ type HelloRequest struct {
 type HelloResponse struct {
 	Data string `json:"data"`
 }
+
+type ErrorRequest struct {
+	Text string `json:"text"`
+}
+
+type ErrorResponse struct {
+	Error string `json:"error"`
+}

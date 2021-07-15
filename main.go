@@ -14,7 +14,7 @@ import (
 
 	"github.com/Zhanat87/go-kit-hello/factory"
 	"github.com/Zhanat87/go-kit-hello/middleware"
-	"github.com/Zhanat87/go-kit-hello/utils"
+	"github.com/Zhanat87/go-kit-hello/service/hello"
 
 	commongrpc "github.com/Zhanat87/common-libs/grpc"
 	"github.com/Zhanat87/common-libs/loggers"
@@ -30,6 +30,8 @@ import (
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+
+	_ "github.com/joho/godotenv/autoload"
 )
 
 func main() {
@@ -38,13 +40,14 @@ func main() {
 	flag.Parse()
 	logger := new(loggers.GoKitLoggerFactory).CreateLogger()
 	httpLogger := log.With(logger, "component", "http")
+	// todo: вынести отсюда
 	// Set-up our OpenCensus instrumentation with Zipkin backend
 	zipkinURL := "http://localhost:9411/api/v2/spans"
 	var tracer *zipkin.Tracer
 	{
 		var (
 			reporter         = httpreporter.NewReporter(zipkinURL)
-			localEndpoint, _ = zipkin.NewEndpoint(utils.PackageName, ":0")
+			localEndpoint, _ = zipkin.NewEndpoint(hello.PackageName, ":0")
 			exporter         = oczipkin.NewExporter(reporter, localEndpoint)
 			err              error
 		)
@@ -60,8 +63,9 @@ func main() {
 	}
 	mux := http.NewServeMux()
 	helloHTTPService := new(factory.ServiceFactory).CreateHTTPService(httpLogger, tracer)
-	mux.Handle(utils.BaseURL, hellohttp.MakeHandler(middleware.MakeEndpoints(helloHTTPService), httpLogger,
-		utils.BaseURL, hellohttp.DecodeIndexRequest))
+	mux.Handle(hello.BaseURL, hellohttp.MakeHandler(middleware.MakeEndpoints(helloHTTPService), httpLogger,
+		hello.BaseURL, hellohttp.DecodeIndexRequest))
+	// todo: default handlers в common
 	http.Handle("/metrics", promhttp.Handler())
 	http.HandleFunc("/health-check", httphandlers.HealthCheck)
 	http.Handle("/api/v1/", httphandlers.AccessControl(mux))
@@ -89,3 +93,8 @@ func main() {
 	}()
 	_ = logger.Log("terminated", <-errs)
 }
+
+// ошибку вынести отдельно
+// сделать пинг сервис через grpc здесь и вынести в новый сервис понг
+// сделать пинг сервис через http здесь и вынести в новый сервис понг
+// сделать zipkin nested span и проверить как это все работает

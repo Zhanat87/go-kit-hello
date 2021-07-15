@@ -2,3 +2,4 @@
 other
 vendor
 data/grafana
+.env
