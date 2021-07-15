@@ -4,9 +4,8 @@ import (
 	"context"
 	"errors"
 	"github.com/openzipkin/zipkin-go"
-	"log"
-
 	"google.golang.org/grpc"
+	"log"
 
 	"github.com/Zhanat87/go-kit-hello/contracts"
 	"github.com/Zhanat87/go-kit-hello/transport"
@@ -33,7 +32,7 @@ func (s *helloHTTPService) Error(req interface{}) (interface{}, error) {
 	return &transport.HelloResponse{Data: "error response"}, errors.New("error from hello")
 }
 
-func (s *helloHTTPService) Grpc(req interface{}) (interface{}, error) {
+func (s *helloHTTPService) Grpc(ctx context.Context, req interface{}) (interface{}, error) {
 	r := req.(*transport.HelloRequest)
 	var conn *grpc.ClientConn
 	conn, err := grpc.Dial(":50051", grpc.WithInsecure(),

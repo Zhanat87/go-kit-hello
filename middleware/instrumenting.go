@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"context"
 	"time"
 
 	"github.com/Zhanat87/go-kit-hello/contracts"
@@ -56,7 +57,7 @@ func (s *instrumentingMiddleware) Error(req interface{}) (_ interface{}, err err
 	return s.next.Error(req)
 }
 
-func (s *instrumentingMiddleware) Grpc(req interface{}) (_ interface{}, err error) {
+func (s *instrumentingMiddleware) Grpc(ctx context.Context, req interface{}) (_ interface{}, err error) {
 	defer func(begin time.Time) {
 		labels := []string{"method", s.packageName + "_grpc"}
 		s.requestCount.With(labels...).Add(1)
@@ -67,5 +68,5 @@ func (s *instrumentingMiddleware) Grpc(req interface{}) (_ interface{}, err erro
 		s.requestLatency.With(labels...).Observe(time.Since(begin).Seconds())
 	}(time.Now())
 
-	return s.next.Grpc(req)
+	return s.next.Grpc(ctx, req)
 }

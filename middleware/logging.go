@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"context"
 	"time"
 
 	"github.com/Zhanat87/go-kit-hello/contracts"
@@ -47,7 +48,7 @@ func (s *loggingMiddleware) Error(req interface{}) (_ interface{}, err error) {
 	return s.next.Error(req)
 }
 
-func (s *loggingMiddleware) Grpc(req interface{}) (_ interface{}, err error) {
+func (s *loggingMiddleware) Grpc(ctx context.Context, req interface{}) (_ interface{}, err error) {
 	defer func(begin time.Time) {
 		if err != nil {
 			_ = s.logger.Log(
@@ -58,5 +59,5 @@ func (s *loggingMiddleware) Grpc(req interface{}) (_ interface{}, err error) {
 		}
 	}(time.Now())
 
-	return s.next.Grpc(req)
+	return s.next.Grpc(ctx, req)
 }

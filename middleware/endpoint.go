@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"context"
-
 	"github.com/Zhanat87/go-kit-hello/contracts"
 	"github.com/Zhanat87/go-kit-hello/transport"
 	"github.com/go-kit/kit/endpoint"
@@ -50,7 +49,7 @@ func MakeErrorEndpoint(next contracts.HTTPService) endpoint.Endpoint {
 func MakeGrpcEndpoint(next contracts.HTTPService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(transport.HelloRequest)
-		resp, err := next.Grpc(&req)
+		resp, err := next.Grpc(ctx, &req)
 		if err != nil {
 			return nil, err
 		}
