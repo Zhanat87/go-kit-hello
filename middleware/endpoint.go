@@ -6,6 +6,7 @@ import (
 	"github.com/Zhanat87/common-libs/gokitmiddlewares"
 	errorservice "github.com/Zhanat87/go-kit-hello/service/error"
 	"github.com/Zhanat87/go-kit-hello/service/hello"
+	"github.com/Zhanat87/go-kit-hello/service/ping"
 	"github.com/Zhanat87/go-kit-hello/transport"
 	"github.com/go-kit/kit/endpoint"
 )
@@ -54,25 +55,38 @@ func MakeErrorIndexEndpoint(next errorservice.HTTPService) endpoint.Endpoint {
 	}
 }
 
-//type PingEndpoints struct {
-//	GrpcEndpoint endpoint.Endpoint
-//	//HTTPEndpoint endpoint.Endpoint
-//}
-//
-//func MakePingEndpoints(s hello.HTTPService) PingEndpoints {
-//	return PingEndpoints{
-//		GrpcEndpoint: GetTraceEndpoint(MakePingGrpcEndpoint(s), "ping grpc"),
-//	}
-//}
-//
-//func MakePingGrpcEndpoint(next hello.HTTPService) endpoint.Endpoint {
-//	return func(ctx context.Context, request interface{}) (interface{}, error) {
-//		req := request.(transport.HelloRequest)
-//		resp, err := next.Grpc(ctx, &req)
-//		if err != nil {
-//			return nil, err
-//		}
-//
-//		return resp, nil
-//	}
-//}
+type PingEndpoints struct {
+	GrpcEndpoint endpoint.Endpoint
+	HTTPEndpoint endpoint.Endpoint
+}
+
+func MakePingEndpoints(s ping.HTTPService) PingEndpoints {
+	return PingEndpoints{
+		GrpcEndpoint: gokitmiddlewares.GetTraceEndpoint(MakePingGrpcEndpoint(s), "ping grpc"),
+		HTTPEndpoint: gokitmiddlewares.GetTraceEndpoint(MakePingHTTPEndpoint(s), "ping http"),
+	}
+}
+
+func MakePingGrpcEndpoint(next ping.HTTPService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(transport.PingRequest)
+		resp, err := next.Grpc(&req)
+		if err != nil {
+			return nil, err
+		}
+
+		return resp, nil
+	}
+}
+
+func MakePingHTTPEndpoint(next ping.HTTPService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(transport.PingRequest)
+		resp, err := next.HTTP(&req)
+		if err != nil {
+			return nil, err
+		}
+
+		return resp, nil
+	}
+}

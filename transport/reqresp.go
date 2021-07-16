@@ -16,10 +16,10 @@ type ErrorResponse struct {
 	Error string `json:"error"`
 }
 
-type PingPongRequest struct {
+type PingRequest struct {
 	Ping string `json:"ping"`
 }
 
-type PingPongResponse struct {
+type PingResponse struct {
 	Pong string `json:"pong"`
 }

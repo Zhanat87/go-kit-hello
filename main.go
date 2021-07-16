@@ -8,15 +8,15 @@ import (
 	"os/signal"
 	"syscall"
 
-	errorservice "github.com/Zhanat87/go-kit-hello/service/error"
-
 	commongrpc "github.com/Zhanat87/common-libs/grpc"
 	"github.com/Zhanat87/common-libs/httphandlers"
 	"github.com/Zhanat87/common-libs/loggers"
 	"github.com/Zhanat87/common-libs/tracers"
 	"github.com/Zhanat87/go-kit-hello/factory"
 	"github.com/Zhanat87/go-kit-hello/middleware"
+	errorservice "github.com/Zhanat87/go-kit-hello/service/error"
 	"github.com/Zhanat87/go-kit-hello/service/hello"
+	"github.com/Zhanat87/go-kit-hello/service/ping"
 	hellogrpc "github.com/Zhanat87/go-kit-hello/transport/grpc"
 	hellohttp "github.com/Zhanat87/go-kit-hello/transport/http"
 	"github.com/go-kit/kit/log"
@@ -45,6 +45,9 @@ func main() {
 	mux.Handle(errorservice.BaseURL, hellohttp.MakeErrorHandler(
 		middleware.MakeErrorEndpoints(new(factory.ErrorServiceFactory).CreateHTTPService(httpLogger)),
 		httpLogger, errorservice.BaseURL))
+	mux.Handle(ping.BaseURL, hellohttp.MakePingHandler(
+		middleware.MakePingEndpoints(new(factory.PingServiceFactory).CreateHTTPService(httpLogger)),
+		httpLogger, ping.BaseURL))
 	httphandlers.InitDefaultHandlers(mux)
 	errs := make(chan error, 3)
 	baseGrpcServer := grpc.NewServer(grpc.StatsHandler(zipkingrpc.NewServerHandler(tracer)))
@@ -71,6 +74,5 @@ func main() {
 	_ = logger.Log("terminated", <-errs)
 }
 
-// сделать пинг сервис через grpc здесь и вынести в новый сервис понг
-// сделать пинг сервис через http здесь и вынести в новый сервис понг
+// вынести в новый сервис понг
 // сделать zipkin nested span и проверить как это все работает
