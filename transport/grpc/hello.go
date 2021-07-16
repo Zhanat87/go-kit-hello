@@ -24,7 +24,7 @@ func NewServer(s hello.HTTPService, logger log.Logger) commongrpc.HelloServiceSe
 
 	return &helloGrpcServer{
 		sayHi: grpc.NewServer(
-			middleware.MakeIndexEndpoint(s),
+			middleware.MakeHelloIndexEndpoint(s),
 			decodeHelloRequest,
 			encodeHelloResponse,
 			options...,

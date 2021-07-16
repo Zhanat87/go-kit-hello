@@ -3,10 +3,8 @@ package http
 import (
 	"context"
 	"encoding/json"
-	"net/http"
-
-
 	kitoc "github.com/go-kit/kit/tracing/opencensus"
+	"net/http"
 
 	"github.com/Zhanat87/common-libs/encoders"
 	"github.com/Zhanat87/go-kit-hello/middleware"
@@ -17,7 +15,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func MakeHandler(srvEndpoints middleware.Endpoints, logger kitlog.Logger,
+func MakeHandler(srvEndpoints middleware.HelloEndpoints, logger kitlog.Logger,
 	baseURL string, decodeIndexRequestFunc kithttp.DecodeRequestFunc) http.Handler {
 	opts := []kithttp.ServerOption{
 		kithttp.ServerErrorHandler(kittransport.NewLogErrorHandler(logger)),
@@ -30,22 +28,22 @@ func MakeHandler(srvEndpoints middleware.Endpoints, logger kitlog.Logger,
 		encoders.EncodeResponseJSON,
 		opts...,
 	)
-	error := kithttp.NewServer(
-		srvEndpoints.ErrorEndpoint,
-		decodeIndexRequestFunc,
-		encoders.EncodeResponseJSON,
-		opts...,
-	)
-	grpc := kithttp.NewServer(
-		srvEndpoints.GrpcEndpoint,
-		decodeIndexRequestFunc,
-		encoders.EncodeResponseJSON,
-		opts...,
-	)
+	//error := kithttp.NewServer(
+	//	srvEndpoints.ErrorEndpoint,
+	//	decodeIndexRequestFunc,
+	//	encoders.EncodeResponseJSON,
+	//	opts...,
+	//)
+	//grpc := kithttp.NewServer(
+	//	srvEndpoints.GrpcEndpoint,
+	//	decodeIndexRequestFunc,
+	//	encoders.EncodeResponseJSON,
+	//	opts...,
+	//)
 	r := mux.NewRouter()
 	r.Handle(baseURL, index).Methods(http.MethodPost)
-	r.Handle(baseURL+"error", error).Methods(http.MethodPost)
-	r.Handle(baseURL+"grpc", grpc).Methods(http.MethodPost)
+	// r.Handle(baseURL+"error", error).Methods(http.MethodPost)
+	// r.Handle(baseURL+"grpc", grpc).Methods(http.MethodPost)
 
 	return r
 }

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"net"
 	"net/http"
@@ -9,14 +8,12 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/Zhanat87/common-libs/httphandlers"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
-
 	"github.com/Zhanat87/go-kit-hello/factory"
 	"github.com/Zhanat87/go-kit-hello/middleware"
 	"github.com/Zhanat87/go-kit-hello/service/hello"
 
 	commongrpc "github.com/Zhanat87/common-libs/grpc"
+	"github.com/Zhanat87/common-libs/httphandlers"
 	"github.com/Zhanat87/common-libs/loggers"
 	hellogrpc "github.com/Zhanat87/go-kit-hello/transport/grpc"
 	hellohttp "github.com/Zhanat87/go-kit-hello/transport/http"
@@ -35,9 +32,8 @@ import (
 )
 
 func main() {
-	httpAddr := flag.String("http.addr", ":8080", "HTTP listen address only port :8080")
-	grpcAddr := flag.String("grpc.addr", ":50051", "gRPC listen address only port :50051")
-	flag.Parse()
+	httpAddr := os.Getenv("HTTP_ADDR")
+	grpcAddr := os.Getenv("GRPC_ADDR")
 	logger := new(loggers.GoKitLoggerFactory).CreateLogger()
 	httpLogger := log.With(logger, "component", "http")
 	// todo: вынести отсюда
@@ -63,27 +59,24 @@ func main() {
 	}
 	mux := http.NewServeMux()
 	helloHTTPService := new(factory.ServiceFactory).CreateHTTPService(httpLogger, tracer)
-	mux.Handle(hello.BaseURL, hellohttp.MakeHandler(middleware.MakeEndpoints(helloHTTPService), httpLogger,
+	mux.Handle(hello.BaseURL, hellohttp.MakeHandler(middleware.MakeHelloEndpoints(helloHTTPService), httpLogger,
 		hello.BaseURL, hellohttp.DecodeIndexRequest))
-	// todo: default handlers в common
-	http.Handle("/metrics", promhttp.Handler())
-	http.HandleFunc("/health-check", httphandlers.HealthCheck)
-	http.Handle("/api/v1/", httphandlers.AccessControl(mux))
+	httphandlers.InitDefaultHandlers(mux)
 	errs := make(chan error, 3)
 	baseGrpcServer := grpc.NewServer(grpc.StatsHandler(zipkingrpc.NewServerHandler(tracer)))
 	grpcHelloServer := hellogrpc.NewServer(helloHTTPService, logger)
 	commongrpc.RegisterHelloServiceServer(baseGrpcServer, grpcHelloServer)
 	reflection.Register(baseGrpcServer)
-	grpcListener, err := net.Listen("tcp", *grpcAddr)
+	grpcListener, err := net.Listen("tcp", grpcAddr)
 	if err != nil {
 		panic(fmt.Errorf("fatal error while init gRPC listener: %s", err))
 	}
 	go func() {
-		_ = logger.Log("transport", "http", "address", *httpAddr, "msg", "listening hello-api")
-		errs <- http.ListenAndServe(*httpAddr, nil)
+		_ = logger.Log("transport", "http", "address", httpAddr, "msg", "listening hello-api")
+		errs <- http.ListenAndServe(httpAddr, nil)
 	}()
 	go func() {
-		_ = logger.Log("transport", "grpc", "address", *grpcAddr, "msg", "listening hello-api")
+		_ = logger.Log("transport", "grpc", "address", grpcAddr, "msg", "listening hello-api")
 		errs <- baseGrpcServer.Serve(grpcListener)
 	}()
 	go func() {

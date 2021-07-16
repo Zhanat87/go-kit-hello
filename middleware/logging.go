@@ -1,63 +1,29 @@
 package middleware
 
 import (
-	"context"
 	"time"
 
+	"github.com/Zhanat87/common-libs/gokitmiddlewares"
 	"github.com/Zhanat87/go-kit-hello/service/hello"
 	"github.com/go-kit/kit/log"
 )
 
 type loggingMiddleware struct {
-	logger      log.Logger
-	next        hello.HTTPService
-	packageName string
+	saver gokitmiddlewares.Saver
+	next  hello.HTTPService
 }
 
 func NewLoggingMiddleware(logger log.Logger, s hello.HTTPService, packageName string) hello.HTTPService {
-	return &loggingMiddleware{logger, s, packageName}
+	return &loggingMiddleware{
+		saver: gokitmiddlewares.NewLogging(logger, packageName),
+		next:  s,
+	}
 }
 
 func (s *loggingMiddleware) Index(req interface{}) (_ interface{}, err error) {
 	defer func(begin time.Time) {
-		println("e")
-		if err != nil {
-			println("f")
-			_ = s.logger.Log(
-				"method", s.packageName+"_index",
-				"took", time.Since(begin),
-				"err", err,
-			)
-		}
+		s.saver.Save(err, begin, "index")
 	}(time.Now())
 
 	return s.next.Index(req)
-}
-
-func (s *loggingMiddleware) Error(req interface{}) (_ interface{}, err error) {
-	defer func(begin time.Time) {
-		if err != nil {
-			_ = s.logger.Log(
-				"method", s.packageName+"_error",
-				"took", time.Since(begin),
-				"err", err,
-			)
-		}
-	}(time.Now())
-
-	return s.next.Error(req)
-}
-
-func (s *loggingMiddleware) Grpc(ctx context.Context, req interface{}) (_ interface{}, err error) {
-	defer func(begin time.Time) {
-		if err != nil {
-			_ = s.logger.Log(
-				"method", s.packageName+"_grpc",
-				"took", time.Since(begin),
-				"err", err,
-			)
-		}
-	}(time.Now())
-
-	return s.next.Grpc(ctx, req)
 }
