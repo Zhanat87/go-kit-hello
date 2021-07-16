@@ -15,3 +15,11 @@ type ErrorRequest struct {
 type ErrorResponse struct {
 	Error string `json:"error"`
 }
+
+type PingPongRequest struct {
+	Ping string `json:"ping"`
+}
+
+type PingPongResponse struct {
+	Pong string `json:"pong"`
+}

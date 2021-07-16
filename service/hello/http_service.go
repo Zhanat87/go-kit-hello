@@ -2,7 +2,6 @@ package hello
 
 import (
 	"github.com/Zhanat87/go-kit-hello/transport"
-	"github.com/openzipkin/zipkin-go"
 )
 
 type HTTPService interface {
@@ -11,11 +10,10 @@ type HTTPService interface {
 
 type httpService struct {
 	service Service
-	tracer  *zipkin.Tracer
 }
 
-func NewHTTPService(tracer *zipkin.Tracer) HTTPService {
-	return &httpService{service: NewService(), tracer: tracer}
+func NewHTTPService() HTTPService {
+	return &httpService{service: NewService()}
 }
 
 func (s *httpService) Index(req interface{}) (interface{}, error) {

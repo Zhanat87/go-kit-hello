@@ -14,12 +14,12 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func MakeHelloHandler(srvEndpoints middleware.HelloEndpoints,
-	logger kitlog.Logger, baseURL string) http.Handler {
+func MakeErrorHandler(srvEndpoints middleware.ErrorEndpoints, logger kitlog.Logger,
+	baseURL string) http.Handler {
 	opts := gokithttp.GetServerOptions(logger)
 	index := kithttp.NewServer(
 		srvEndpoints.IndexEndpoint,
-		DecodeHelloIndexRequest,
+		DecodeErrorIndexRequest,
 		encoders.EncodeResponseJSON,
 		opts...,
 	)
@@ -29,8 +29,8 @@ func MakeHelloHandler(srvEndpoints middleware.HelloEndpoints,
 	return r
 }
 
-func DecodeHelloIndexRequest(_ context.Context, r *http.Request) (interface{}, error) {
-	var body transport.HelloRequest
+func DecodeErrorIndexRequest(_ context.Context, r *http.Request) (interface{}, error) {
+	var body transport.ErrorRequest
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		return nil, err
 	}
