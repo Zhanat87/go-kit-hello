@@ -13,6 +13,7 @@ import (
 	commongrpc "github.com/Zhanat87/common-libs/grpc"
 	"github.com/Zhanat87/common-libs/httphandlers"
 	"github.com/Zhanat87/common-libs/loggers"
+	"github.com/Zhanat87/common-libs/tracers"
 	"github.com/Zhanat87/go-kit-hello/factory"
 	"github.com/Zhanat87/go-kit-hello/middleware"
 	"github.com/Zhanat87/go-kit-hello/service/hello"
@@ -20,12 +21,7 @@ import (
 	hellohttp "github.com/Zhanat87/go-kit-hello/transport/http"
 	"github.com/go-kit/kit/log"
 
-	oczipkin "contrib.go.opencensus.io/exporter/zipkin"
-	zipkin "github.com/openzipkin/zipkin-go"
 	zipkingrpc "github.com/openzipkin/zipkin-go/middleware/grpc"
-	httpreporter "github.com/openzipkin/zipkin-go/reporter/http"
-	"go.opencensus.io/trace"
-
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
@@ -37,27 +33,11 @@ func main() {
 	grpcAddr := os.Getenv("GRPC_ADDR")
 	logger := new(loggers.GoKitLoggerFactory).CreateLogger()
 	httpLogger := log.With(logger, "component", "http")
-	// todo: вынести отсюда
-	// Set-up our OpenCensus instrumentation with Zipkin backend
-	zipkinURL := "http://localhost:9411/api/v2/spans"
-	var tracer *zipkin.Tracer
-	{
-		var (
-			reporter         = httpreporter.NewReporter(zipkinURL)
-			localEndpoint, _ = zipkin.NewEndpoint(hello.PackageName, ":0")
-			exporter         = oczipkin.NewExporter(reporter, localEndpoint)
-			err              error
-		)
-		defer reporter.Close()
-		// Always sample our traces for this demo.
-		trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
-		// Register our trace exporter.
-		trace.RegisterExporter(exporter)
-		tracer, err = zipkin.NewTracer(reporter)
-		if err != nil {
-			panic(err)
-		}
+	tracer, reporter, err := tracers.NewZipkinTracerAndHTTPReporter("hello service", ":0")
+	if err != nil {
+		panic(err)
 	}
+	defer reporter.Close()
 	mux := http.NewServeMux()
 	helloHTTPService := new(factory.HelloServiceFactory).CreateHTTPService(httpLogger)
 	mux.Handle(hello.BaseURL, hellohttp.MakeHelloHandler(
