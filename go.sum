@@ -14,6 +14,16 @@ github.com/Zhanat87/common-libs v0.1.0 h1:lrVia9aNgmfUF1oa6hrKTyFSL5mFAzsBYTAztZ
 github.com/Zhanat87/common-libs v0.1.0/go.mod h1:1cNe0UpNKhV3RGmGpwupHYwQtcV1+bscwQfzafLR6kA=
 github.com/Zhanat87/common-libs v0.1.4 h1:A6T01PgtX1yirg8nFymFH7a5GD1gfh+2SeEScqrpNm4=
 github.com/Zhanat87/common-libs v0.1.4/go.mod h1:1cNe0UpNKhV3RGmGpwupHYwQtcV1+bscwQfzafLR6kA=
+github.com/Zhanat87/common-libs v0.1.5 h1:8jnFXCwoxjcWYMfccFWF4HDZu3b0NAYxVfOvrMJ5JOM=
+github.com/Zhanat87/common-libs v0.1.5/go.mod h1:1cNe0UpNKhV3RGmGpwupHYwQtcV1+bscwQfzafLR6kA=
+github.com/Zhanat87/common-libs v0.1.6 h1:AF1fxj2LbSBSuDqngNMhmlXGazd8cZflEufaCXJ7N/8=
+github.com/Zhanat87/common-libs v0.1.6/go.mod h1:1cNe0UpNKhV3RGmGpwupHYwQtcV1+bscwQfzafLR6kA=
+github.com/Zhanat87/common-libs v0.1.7 h1:2nV6kmqlPxval2dKbjUHzcAo7qQrP8vrCNRyZN/PPsE=
+github.com/Zhanat87/common-libs v0.1.7/go.mod h1:1cNe0UpNKhV3RGmGpwupHYwQtcV1+bscwQfzafLR6kA=
+github.com/Zhanat87/common-libs v0.1.8 h1:trAIfWUrDpUyX06KOvrYPru3S4ceqUyBGj55qxkzb+Y=
+github.com/Zhanat87/common-libs v0.1.8/go.mod h1:1cNe0UpNKhV3RGmGpwupHYwQtcV1+bscwQfzafLR6kA=
+github.com/Zhanat87/common-libs v0.1.9 h1:h4QWIh7j4rUpQzrgCTf9n9MzDMDfRNBYZMrnYcR0Lao=
+github.com/Zhanat87/common-libs v0.1.9/go.mod h1:1cNe0UpNKhV3RGmGpwupHYwQtcV1+bscwQfzafLR6kA=
 github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5/go.mod h1:SkGFH1ia65gfNATL8TAiHDNxPzPdmEL5uirI2Uyuz6c=
 github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
 github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=

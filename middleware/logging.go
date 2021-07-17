@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"context"
 	"time"
 
 	"github.com/Zhanat87/common-libs/gokitmiddlewares"
@@ -23,12 +24,12 @@ func NewHelloLoggingMiddleware(logger log.Logger,
 	}
 }
 
-func (s *helloLoggingMiddleware) Index(req interface{}) (_ interface{}, err error) {
+func (s *helloLoggingMiddleware) Index(ctx context.Context, req interface{}) (_ interface{}, err error) {
 	defer func(begin time.Time) {
 		s.saver.Save(err, begin, "index")
 	}(time.Now())
 
-	return s.next.Index(req)
+	return s.next.Index(ctx, req)
 }
 
 type errorLoggingMiddleware struct {

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/Zhanat87/common-libs/gokitmiddlewares"
+	"github.com/Zhanat87/common-libs/tracers"
 	errorservice "github.com/Zhanat87/go-kit-hello/service/error"
 	"github.com/Zhanat87/go-kit-hello/service/hello"
 	"github.com/Zhanat87/go-kit-hello/service/ping"
@@ -24,7 +25,12 @@ func MakeHelloEndpoints(s hello.HTTPService) HelloEndpoints {
 func MakeHelloIndexEndpoint(next hello.HTTPService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(transport.HelloRequest)
-		resp, err := next.Index(&req)
+		tracers.ZipkinTracer.StartSpanFromContext(
+			ctx,
+			"MakeHelloIndexEndpoint",
+		)
+		// utils.PrintContextInternals("MakeHelloIndexEndpoint", ctx, false)
+		resp, err := next.Index(ctx, &req)
 		if err != nil {
 			return nil, err
 		}

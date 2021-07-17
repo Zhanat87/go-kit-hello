@@ -16,6 +16,7 @@ import (
 
 func MakeHelloHandler(srvEndpoints middleware.HelloEndpoints,
 	logger kitlog.Logger, baseURL string) http.Handler {
+	// opts := gokithttp.GetServerOptionsWithZipkinTracer(logger, tracers.ZipkinTracer)
 	opts := gokithttp.GetServerOptions(logger)
 	index := kithttp.NewServer(
 		srvEndpoints.IndexEndpoint,

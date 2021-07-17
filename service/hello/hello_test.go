@@ -1,6 +1,7 @@
 package hello_test
 
 import (
+	"context"
 	"os"
 	"testing"
 
@@ -27,6 +28,6 @@ func TestService(t *testing.T) {
 	Convey("Service", t, func() {
 		service := hello.NewService()
 		name := "test name"
-		So(hello.Greeting+name, ShouldEqual, service.SayHi(name))
+		So(hello.Greeting+name, ShouldEqual, service.SayHi(context.Background(), name))
 	})
 }

@@ -33,11 +33,11 @@ func main() {
 	grpcAddr := os.Getenv("GRPC_ADDR")
 	logger := new(loggers.GoKitLoggerFactory).CreateLogger()
 	httpLogger := log.With(logger, "component", "http")
-	tracer, reporter, err := tracers.NewZipkinTracerAndHTTPReporter("hello service", ":0")
+	err := tracers.InitZipkinTracerAndZipkinHTTPReporter(hello.ServiceName, ":0")
 	if err != nil {
 		panic(err)
 	}
-	defer reporter.Close()
+	defer tracers.ZipkinReporter.Close()
 	mux := http.NewServeMux()
 	helloHTTPService := new(factory.HelloServiceFactory).CreateHTTPService(httpLogger)
 	mux.Handle(hello.BaseURL, hellohttp.MakeHelloHandler(
@@ -50,7 +50,7 @@ func main() {
 		httpLogger, ping.BaseURL))
 	httphandlers.InitDefaultHandlers(mux)
 	errs := make(chan error, 3)
-	baseGrpcServer := grpc.NewServer(grpc.StatsHandler(zipkingrpc.NewServerHandler(tracer)))
+	baseGrpcServer := grpc.NewServer(grpc.StatsHandler(zipkingrpc.NewServerHandler(tracers.ZipkinTracer)))
 	grpcHelloServer := hellogrpc.NewServer(helloHTTPService, logger)
 	commongrpc.RegisterHelloServiceServer(baseGrpcServer, grpcHelloServer)
 	reflection.Register(baseGrpcServer)
@@ -73,6 +73,3 @@ func main() {
 	}()
 	_ = logger.Log("terminated", <-errs)
 }
-
-// вынести в новый сервис понг
-// сделать zipkin nested span и проверить как это все работает
