@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	contrib.go.opencensus.io/exporter/zipkin v0.1.2 // indirect
-	github.com/Zhanat87/common-libs v0.1.9
+	github.com/Zhanat87/common-libs v0.2.6
 	github.com/go-kit/kit v0.11.0
 	github.com/gorilla/mux v1.6.2
 	github.com/joho/godotenv v1.3.0

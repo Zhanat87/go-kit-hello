@@ -39,14 +39,14 @@ func main() {
 	}
 	defer tracers.ZipkinReporter.Close()
 	mux := http.NewServeMux()
-	helloHTTPService := new(factory.HelloServiceFactory).CreateHTTPService(httpLogger)
+	helloHTTPService := new(factory.HelloServiceFactory).CreateHTTPService(hello.PackageName, httpLogger, tracers.ZipkinTracer)
 	mux.Handle(hello.BaseURL, hellohttp.MakeHelloHandler(
 		middleware.MakeHelloEndpoints(helloHTTPService), httpLogger, hello.BaseURL))
 	mux.Handle(errorservice.BaseURL, hellohttp.MakeErrorHandler(
-		middleware.MakeErrorEndpoints(new(factory.ErrorServiceFactory).CreateHTTPService(httpLogger)),
+		middleware.MakeErrorEndpoints(new(factory.ErrorServiceFactory).CreateHTTPService(errorservice.PackageName, httpLogger, tracers.ZipkinTracer)),
 		httpLogger, errorservice.BaseURL))
 	mux.Handle(ping.BaseURL, hellohttp.MakePingHandler(
-		middleware.MakePingEndpoints(new(factory.PingServiceFactory).CreateHTTPService(httpLogger)),
+		middleware.MakePingEndpoints(new(factory.PingServiceFactory).CreateHTTPService(ping.PackageName, httpLogger, tracers.ZipkinTracer)),
 		httpLogger, ping.BaseURL))
 	httphandlers.InitDefaultHandlers(mux)
 	errs := make(chan error, 3)

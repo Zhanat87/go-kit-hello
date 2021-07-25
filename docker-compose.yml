@@ -29,6 +29,12 @@ services:
       - MYSQL_PASS=zipkin
     depends_on:
       - storage
+  dozzle:
+    image: amir20/dozzle:latest
+    container_name: dozzle
+    network_mode: host
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
 volumes:
   data:
     external: true

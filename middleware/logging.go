@@ -12,15 +12,14 @@ import (
 )
 
 type helloLoggingMiddleware struct {
-	saver gokitmiddlewares.Saver
 	next  hello.HTTPService
+	saver gokitmiddlewares.Saver
 }
 
-func NewHelloLoggingMiddleware(logger log.Logger,
-	s hello.HTTPService, packageName string) hello.HTTPService {
+func NewHelloLoggingMiddleware(s hello.HTTPService, packageName string, logger log.Logger) hello.HTTPService {
 	return &helloLoggingMiddleware{
-		saver: gokitmiddlewares.NewLogging(logger, packageName),
 		next:  s,
+		saver: gokitmiddlewares.NewLogging(logger, packageName),
 	}
 }
 
@@ -33,51 +32,49 @@ func (s *helloLoggingMiddleware) Index(ctx context.Context, req interface{}) (_ 
 }
 
 type errorLoggingMiddleware struct {
-	saver gokitmiddlewares.Saver
 	next  errorservice.HTTPService
+	saver gokitmiddlewares.Saver
 }
 
-func NewErrorLoggingMiddleware(logger log.Logger,
-	s errorservice.HTTPService, packageName string) errorservice.HTTPService {
+func NewErrorLoggingMiddleware(s errorservice.HTTPService, packageName string, logger log.Logger) errorservice.HTTPService {
 	return &errorLoggingMiddleware{
-		saver: gokitmiddlewares.NewLogging(logger, packageName),
 		next:  s,
+		saver: gokitmiddlewares.NewLogging(logger, packageName),
 	}
 }
 
-func (s *errorLoggingMiddleware) Index(req interface{}) (_ interface{}, err error) {
+func (s *errorLoggingMiddleware) Index(ctx context.Context, req interface{}) (_ interface{}, err error) {
 	defer func(begin time.Time) {
 		s.saver.Save(err, begin, "index")
 	}(time.Now())
 
-	return s.next.Index(req)
+	return s.next.Index(ctx, req)
 }
 
 type pingLoggingMiddleware struct {
-	saver gokitmiddlewares.Saver
 	next  ping.HTTPService
+	saver gokitmiddlewares.Saver
 }
 
-func NewPingLoggingMiddleware(logger log.Logger,
-	s ping.HTTPService, packageName string) ping.HTTPService {
+func NewPingLoggingMiddleware(s ping.HTTPService, packageName string, logger log.Logger) ping.HTTPService {
 	return &pingLoggingMiddleware{
-		saver: gokitmiddlewares.NewLogging(logger, packageName),
 		next:  s,
+		saver: gokitmiddlewares.NewLogging(logger, packageName),
 	}
 }
 
-func (s *pingLoggingMiddleware) Grpc(req interface{}) (_ interface{}, err error) {
-	defer func(begin time.Time) {
-		s.saver.Save(err, begin, "grpc")
-	}(time.Now())
-
-	return s.next.Grpc(req)
-}
-
-func (s *pingLoggingMiddleware) HTTP(req interface{}) (_ interface{}, err error) {
+func (s *pingLoggingMiddleware) HTTP(ctx context.Context, req interface{}) (_ interface{}, err error) {
 	defer func(begin time.Time) {
 		s.saver.Save(err, begin, "http")
 	}(time.Now())
 
-	return s.next.HTTP(req)
+	return s.next.HTTP(ctx, req)
+}
+
+func (s *pingLoggingMiddleware) Grpc(ctx context.Context, req interface{}) (_ interface{}, err error) {
+	defer func(begin time.Time) {
+		s.saver.Save(err, begin, "grpc")
+	}(time.Now())
+
+	return s.next.Grpc(ctx, req)
 }

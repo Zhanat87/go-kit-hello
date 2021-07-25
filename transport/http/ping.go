@@ -5,6 +5,9 @@ import (
 	"encoding/json"
 	"net/http"
 
+
+	"github.com/Zhanat87/common-libs/tracers"
+
 	"github.com/Zhanat87/common-libs/encoders"
 	"github.com/Zhanat87/common-libs/gokithttp"
 	"github.com/Zhanat87/go-kit-hello/middleware"
@@ -16,7 +19,7 @@ import (
 
 func MakePingHandler(srvEndpoints middleware.PingEndpoints, logger kitlog.Logger,
 	baseURL string) http.Handler {
-	opts := gokithttp.GetServerOptions(logger)
+	opts := gokithttp.GetServerOptionsWithZipkinTracer(logger, tracers.ZipkinTracer)
 	grpc := kithttp.NewServer(
 		srvEndpoints.GrpcEndpoint,
 		DecodePingRequest,

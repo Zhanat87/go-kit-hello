@@ -18,17 +18,17 @@ type HelloEndpoints struct {
 
 func MakeHelloEndpoints(s hello.HTTPService) HelloEndpoints {
 	return HelloEndpoints{
-		IndexEndpoint: gokitmiddlewares.GetTraceEndpoint(MakeHelloIndexEndpoint(s), "hello index"),
+		IndexEndpoint: gokitmiddlewares.GetZipkinEndpoint(tracers.ZipkinTracer, MakeHelloIndexEndpoint(s), "hello index"),
 	}
 }
 
 func MakeHelloIndexEndpoint(next hello.HTTPService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(transport.HelloRequest)
-		tracers.ZipkinTracer.StartSpanFromContext(
-			ctx,
-			"MakeHelloIndexEndpoint",
-		)
+		//tracers.ZipkinTracer.StartSpanFromContext(
+		//	ctx,
+		//	"MakeHelloIndexEndpoint",
+		//)
 		// utils.PrintContextInternals("MakeHelloIndexEndpoint", ctx, false)
 		resp, err := next.Index(ctx, &req)
 		if err != nil {
@@ -52,7 +52,7 @@ func MakeErrorEndpoints(s errorservice.HTTPService) ErrorEndpoints {
 func MakeErrorIndexEndpoint(next errorservice.HTTPService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(transport.ErrorRequest)
-		resp, err := next.Index(&req)
+		resp, err := next.Index(ctx, &req)
 		if err != nil {
 			return nil, err
 		}
@@ -76,7 +76,7 @@ func MakePingEndpoints(s ping.HTTPService) PingEndpoints {
 func MakePingGrpcEndpoint(next ping.HTTPService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(transport.PingRequest)
-		resp, err := next.Grpc(&req)
+		resp, err := next.Grpc(ctx, &req)
 		if err != nil {
 			return nil, err
 		}
@@ -88,7 +88,7 @@ func MakePingGrpcEndpoint(next ping.HTTPService) endpoint.Endpoint {
 func MakePingHTTPEndpoint(next ping.HTTPService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(transport.PingRequest)
-		resp, err := next.HTTP(&req)
+		resp, err := next.HTTP(ctx, &req)
 		if err != nil {
 			return nil, err
 		}

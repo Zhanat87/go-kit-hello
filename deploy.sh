@@ -3,4 +3,4 @@
 make vendor
 make tests
 make lint
-git add . && git commit -am 'hello-0.0.9' && git push
+git add . && git commit -am 'hello-0.1.0' && git push

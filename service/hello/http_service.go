@@ -3,7 +3,6 @@ package hello
 import (
 	"context"
 
-	"github.com/Zhanat87/common-libs/tracers"
 	"github.com/Zhanat87/go-kit-hello/transport"
 )
 
@@ -20,11 +19,6 @@ func NewHTTPService() HTTPService {
 }
 
 func (s *httpService) Index(ctx context.Context, req interface{}) (interface{}, error) {
-	// utils.PrintContextInternals("httpService", ctx, false)
-	tracers.ZipkinTracer.StartSpanFromContext(
-		ctx,
-		"httpService",
-	)
 	r := req.(*transport.HelloRequest)
 
 	return &transport.HelloResponse{Data: s.service.SayHi(ctx, r.Name)}, nil

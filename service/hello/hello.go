@@ -27,7 +27,7 @@ func NewService() Service {
 
 func (s *service) SayHi(ctx context.Context, name string) string {
 	var (
-		queryLabel = "GetExamplesByParam"
+		queryLabel = "service GetExamplesByParam"
 		query      = "select * from example where param = :value"
 	)
 	//traceID, spanName := utils.GetTraceIDAndSpanNameFromContext(ctx, gokitmiddlewares.TraceEndpointNamePrefix)
@@ -56,7 +56,7 @@ func (s *service) SayHi(ctx context.Context, name string) string {
 	span.Annotate(time.Now(), "query:start")
 	// do the actual query...
 	time.Sleep(time.Second)
-	span2 := tracers.ZipkinTracer.StartSpan(queryLabel, zipkin.Parent(span.Context()))
+	span2 := tracers.ZipkinTracer.StartSpan("nested query in GetExamplesByParam", zipkin.Parent(span.Context()))
 	span2.Tag("query2", query)
 	span2.Annotate(time.Now(), "query2:start")
 	time.Sleep(time.Second)
