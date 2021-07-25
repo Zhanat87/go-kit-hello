@@ -4,8 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
-
-
 	"github.com/Zhanat87/common-libs/tracers"
 
 	"github.com/Zhanat87/common-libs/encoders"

@@ -17,8 +17,8 @@ import (
 	errorservice "github.com/Zhanat87/go-kit-hello/service/error"
 	"github.com/Zhanat87/go-kit-hello/service/hello"
 	"github.com/Zhanat87/go-kit-hello/service/ping"
-	hellogrpc "github.com/Zhanat87/go-kit-hello/transport/grpc"
-	hellohttp "github.com/Zhanat87/go-kit-hello/transport/http"
+	appgrpc "github.com/Zhanat87/go-kit-hello/transport/grpc"
+	apphttp "github.com/Zhanat87/go-kit-hello/transport/http"
 	"github.com/go-kit/kit/log"
 
 	zipkingrpc "github.com/openzipkin/zipkin-go/middleware/grpc"
@@ -33,25 +33,25 @@ func main() {
 	grpcAddr := os.Getenv("GRPC_ADDR")
 	logger := new(loggers.GoKitLoggerFactory).CreateLogger()
 	httpLogger := log.With(logger, "component", "http")
-	err := tracers.InitZipkinTracerAndZipkinHTTPReporter(hello.ServiceName, ":0")
+	err := tracers.InitZipkinTracerAndZipkinHTTPReporter(os.Getenv("SERVICE_NAME"), ":0")
 	if err != nil {
 		panic(err)
 	}
 	defer tracers.ZipkinReporter.Close()
 	mux := http.NewServeMux()
 	helloHTTPService := new(factory.HelloServiceFactory).CreateHTTPService(hello.PackageName, httpLogger, tracers.ZipkinTracer)
-	mux.Handle(hello.BaseURL, hellohttp.MakeHelloHandler(
+	mux.Handle(hello.BaseURL, apphttp.MakeHelloHandler(
 		middleware.MakeHelloEndpoints(helloHTTPService), httpLogger, hello.BaseURL))
-	mux.Handle(errorservice.BaseURL, hellohttp.MakeErrorHandler(
+	mux.Handle(errorservice.BaseURL, apphttp.MakeErrorHandler(
 		middleware.MakeErrorEndpoints(new(factory.ErrorServiceFactory).CreateHTTPService(errorservice.PackageName, httpLogger, tracers.ZipkinTracer)),
 		httpLogger, errorservice.BaseURL))
-	mux.Handle(ping.BaseURL, hellohttp.MakePingHandler(
+	mux.Handle(ping.BaseURL, apphttp.MakePingHandler(
 		middleware.MakePingEndpoints(new(factory.PingServiceFactory).CreateHTTPService(ping.PackageName, httpLogger, tracers.ZipkinTracer)),
 		httpLogger, ping.BaseURL))
 	httphandlers.InitDefaultHandlers(mux)
 	errs := make(chan error, 3)
 	baseGrpcServer := grpc.NewServer(grpc.StatsHandler(zipkingrpc.NewServerHandler(tracers.ZipkinTracer)))
-	grpcHelloServer := hellogrpc.NewServer(helloHTTPService, logger)
+	grpcHelloServer := appgrpc.NewServer(helloHTTPService, logger)
 	commongrpc.RegisterHelloServiceServer(baseGrpcServer, grpcHelloServer)
 	reflection.Register(baseGrpcServer)
 	grpcListener, err := net.Listen("tcp", grpcAddr)

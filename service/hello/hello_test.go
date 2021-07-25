@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/Zhanat87/common-libs/tracers"
-
 	"github.com/Zhanat87/go-kit-hello/service/hello"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -20,7 +19,7 @@ func TestMain(m *testing.M) {
 
 func mySetupFunction() {
 	println("start service hello package testing")
-	err := tracers.InitZipkinTracerAndZipkinHTTPReporter(hello.ServiceName, ":0")
+	err := tracers.InitZipkinTracerAndZipkinHTTPReporter(os.Getenv("SERVICE_NAME"), ":0")
 	if err != nil {
 		panic(err)
 	}

@@ -10,7 +10,6 @@ import (
 
 const (
 	PackageName = "hello"
-	ServiceName = "hello service"
 	BaseURL     = "/api/v1/hello/"
 	Greeting    = "Hi, "
 )
