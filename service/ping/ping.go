@@ -35,11 +35,11 @@ func (s *service) Ping(ctx context.Context, url string) (string, error) {
 	pongRequest := &tracingtransport.PongRequest{
 		Data: "ping from hello service",
 	}
-	pongRequestJson, err := json.Marshal(pongRequest)
+	pongRequestJSON, err := json.Marshal(pongRequest)
 	if err != nil {
 		return "", err
 	}
-	newRequest, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(pongRequestJson))
+	newRequest, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(pongRequestJSON))
 	if err != nil {
 		return "", err
 	}
