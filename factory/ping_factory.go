@@ -11,7 +11,7 @@ import (
 type PingServiceFactory struct{}
 
 func (s *PingServiceFactory) CreateHTTPService(packageName string, logger log.Logger, zipkinTracer *zipkin.Tracer) ping.HTTPService {
-	srv := ping.NewHTTPService()
+	srv := ping.NewHTTPService(zipkinTracer)
 	srv = middleware.NewPingLoggingMiddleware(srv, packageName, log.With(logger, "component", packageName))
 	counter, duration, counterError := instrumenting.GetMetricsBySubsystem(packageName)
 	srv = middleware.NewPingInstrumentingMiddleware(srv, packageName, counter, duration, counterError)

@@ -33,7 +33,8 @@ func main() {
 	grpcAddr := os.Getenv("GRPC_ADDR")
 	logger := new(loggers.GoKitLoggerFactory).CreateLogger()
 	httpLogger := log.With(logger, "component", "http")
-	err := tracers.InitZipkinTracerAndZipkinHTTPReporter(os.Getenv("SERVICE_NAME"), ":0")
+	serviceName := os.Getenv("SERVICE_NAME")
+	err := tracers.InitZipkinTracerAndZipkinHTTPReporter(serviceName, ":0")
 	if err != nil {
 		panic(err)
 	}
@@ -59,11 +60,11 @@ func main() {
 		panic(fmt.Errorf("fatal error while init gRPC listener: %s", err))
 	}
 	go func() {
-		_ = logger.Log("transport", "http", "address", httpAddr, "msg", "listening hello-api")
+		_ = logger.Log("transport", "http", "address", httpAddr, "msg", "listening "+serviceName+" api")
 		errs <- http.ListenAndServe(httpAddr, nil)
 	}()
 	go func() {
-		_ = logger.Log("transport", "grpc", "address", grpcAddr, "msg", "listening hello-api")
+		_ = logger.Log("transport", "grpc", "address", grpcAddr, "msg", "listening "+serviceName+" api")
 		errs <- baseGrpcServer.Serve(grpcListener)
 	}()
 	go func() {
