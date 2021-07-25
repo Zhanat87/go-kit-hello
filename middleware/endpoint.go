@@ -18,7 +18,7 @@ type HelloEndpoints struct {
 
 func MakeHelloEndpoints(s hello.HTTPService) HelloEndpoints {
 	return HelloEndpoints{
-		IndexEndpoint: gokitmiddlewares.GetZipkinEndpoint(tracers.ZipkinTracer, MakeHelloIndexEndpoint(s), "hello index"),
+		IndexEndpoint: gokitmiddlewares.GetDefaultEndpoint(MakeHelloIndexEndpoint(s), "hello index", tracers.ZipkinTracer),
 	}
 }
 
@@ -45,7 +45,7 @@ type ErrorEndpoints struct {
 
 func MakeErrorEndpoints(s errorservice.HTTPService) ErrorEndpoints {
 	return ErrorEndpoints{
-		IndexEndpoint: gokitmiddlewares.GetTraceEndpoint(MakeErrorIndexEndpoint(s), "error index"),
+		IndexEndpoint: gokitmiddlewares.GetDefaultEndpoint(MakeErrorIndexEndpoint(s), "error index", tracers.ZipkinTracer),
 	}
 }
 
@@ -68,8 +68,8 @@ type PingEndpoints struct {
 
 func MakePingEndpoints(s ping.HTTPService) PingEndpoints {
 	return PingEndpoints{
-		GrpcEndpoint: gokitmiddlewares.GetTraceEndpoint(MakePingGrpcEndpoint(s), "ping grpc"),
-		HTTPEndpoint: gokitmiddlewares.GetTraceEndpoint(MakePingHTTPEndpoint(s), "ping http"),
+		GrpcEndpoint: gokitmiddlewares.GetDefaultEndpoint(MakePingGrpcEndpoint(s), "ping grpc", tracers.ZipkinTracer),
+		HTTPEndpoint: gokitmiddlewares.GetDefaultEndpoint(MakePingHTTPEndpoint(s), "ping http", tracers.ZipkinTracer),
 	}
 }
 
