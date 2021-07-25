@@ -7,8 +7,6 @@ import (
 
 	"github.com/Zhanat87/common-libs/tracers"
 
-	"github.com/Zhanat87/common-libs/tracers"
-
 	"github.com/Zhanat87/go-kit-hello/service/hello"
 	. "github.com/smartystreets/goconvey/convey"
 )
