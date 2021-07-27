@@ -34,7 +34,7 @@ func main() {
 	logger := new(loggers.GoKitLoggerFactory).CreateLogger()
 	httpLogger := log.With(logger, "component", "http")
 	serviceName := os.Getenv("SERVICE_NAME")
-	err := tracers.InitZipkinTracerAndZipkinHTTPReporter(serviceName, ":0")
+	err := tracers.InitZipkinTracerAsOpentracingGlobalTracerAndZipkinHTTPReporter(serviceName, ":0")
 	if err != nil {
 		panic(err)
 	}

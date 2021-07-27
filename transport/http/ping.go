@@ -3,8 +3,8 @@ package http
 import (
 	"context"
 	"encoding/json"
-	"net/http"
 	"github.com/Zhanat87/common-libs/tracers"
+	"net/http"
 
 	"github.com/Zhanat87/common-libs/encoders"
 	"github.com/Zhanat87/common-libs/gokithttp"
